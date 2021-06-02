@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  whatsapp:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.dev
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/app:delegated

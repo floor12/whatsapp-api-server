@@ -5,11 +5,11 @@ const client = require('../client')
 router.get('/', (req, res) => {
     client.getState().then((data) => {
         console.log(data)
-        res.json({'status': 'connected'})
+        res.json({'status': 'logged'})
     }).catch((err) => {
         if (err) {
             console.log(err);
-            res.json({'status': 'client is not logged in'})
+            res.json({'status': 'disconnected'})
         }
     })
 })

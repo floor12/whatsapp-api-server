@@ -7,9 +7,8 @@ router.get('/qr', (req, res) => {
         res.json({'status': 'QR code not found'});
         return;
     }
-    QRCode.toString(global.qr, function (qrError, string) {
+    QRCode.toDataURL(global.qr, function (qrError, string) {
         console.log(qrError);
-        res.setHeader('Content-Type', 'image/svg+xml');
         res.send(string);
     })
 })

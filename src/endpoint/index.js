@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
     }).catch((err) => {
         if (err) {
             console.log(err);
-            res.json({'status': 'disconnected'})
+            res.json({'status': 'client is not logged in'})
         }
     })
 })

@@ -27,16 +27,16 @@ router.get('/api/', (req, res) => {
         if (data.innerParams.length === 1) {
             parameterInner0 = data.innerParams[0];
         }
-        if (data.innerParams.length === 2) {
-            parameterInner1 = data.innerParams[1];
-        }
+        // if (data.innerParams.length === 2) {
+        //     parameterInner1 = data.innerParams[1];
+        // }
     }
 
     client[data.method](parameter).then((result) => {
-        if (data.innerMethod === undefined) {
+        if (data.innerMethod === undefined || data.innerMethod === null) {
             res.json(result);
         } else {
-            result[data.innerMethod](parameterInner0, parameterInner1).then((innerResult) => {
+            result[data.innerMethod](parameterInner0).then((innerResult) => {
                 res.json(innerResult);
             })
         }

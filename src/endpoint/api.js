@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const client = require('../client')
+const mediaSaver = require('../mediaSaver')
+const {MessageMedia} = require("whatsapp-web.js");
+const fs = require('fs');
 
-router.get('/api/', (req, res) => {
+router.get('/api', (req, res) => {
     const bodyAsJson = req.query.body;
     if (bodyAsJson === undefined) {
         res.json({status: "error", message: "Please enter valid query body"});
@@ -28,8 +31,15 @@ router.get('/api/', (req, res) => {
             parameterInner0 = data.innerParams[0];
         }
         // if (data.innerParams.length === 2) {
-        //     parameterInner1 = data.innerParams[1];
+        //     parameterInner1 = d
+        //     ata.innerParams[1];
         // }
+    }
+
+    if (data.innerMethod === 'sendMessage' && data.fileName) {
+        const filePath = global.uploadsPath + '/' + data.fileName;
+        parameterInner0 = MessageMedia.fromFilePath(filePath);
+        fs.unlinkSync(filePath);
     }
 
     client[data.method](parameter).then((result) => {
@@ -37,6 +47,17 @@ router.get('/api/', (req, res) => {
             res.json(result);
         } else {
             result[data.innerMethod](parameterInner0).then((innerResult) => {
+                if (data.innerMethod === 'fetchMessages') {
+                    innerResult.map((message) => {
+                        if (message.hasMedia) {
+                            message.downloadMedia().then((media) => {
+                                mediaSaver(message.mediaKey, media)
+                            }).catch((error) => {
+                                console.error(error);
+                            })
+                        }
+                    });
+                }
                 res.json(innerResult);
             })
         }

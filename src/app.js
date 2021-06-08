@@ -3,17 +3,19 @@ global.sessionPath = process.env.SESSION_FILE || '/app/var/session.json';
 global.filesPath = '/app/var/files';
 global.uploadsPath = '/app/var/uploads';
 global.qr = null;
+const fs = require('fs');
+global.key = fs.readFileSync(process.env.SSL_KEY);
+global.cert = fs.readFileSync(process.env.SSL_CERT);
 
 const express = require('express');
 const cors = require('cors');
 const busboyBodyParser = require('busboy-body-parser');
-const wss = require('./wss');
-const fs = require('fs');
+
 const port = process.env.PORT || 5000;
 const app = express();
+const wss = require('./wss');
 
 app.use(cors());
-
 app.use(busboyBodyParser());
 
 // Prevent API connections while Whatsapp connection is dropped
@@ -43,4 +45,6 @@ app.use('/', require('./endpoint/index'));
 app.use('/', require('./endpoint/getFile'));
 app.use('/', require('./endpoint/qr'));
 
-app.listen(port);
+app.listen(port, () => {
+    console.log('listening on ' + port);
+});

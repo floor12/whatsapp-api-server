@@ -1,9 +1,13 @@
 const WebSocket = require('ws');
 const client = require('./client');
+const https = require('https');
 const QRCode = require('qrcode');
 const fs = require('fs');
 
-const wss = new WebSocket.Server({port: 8080});
+const server = https.createServer({key: global.key, cert: global.cert});
+
+const wss = new WebSocket.Server({server});
+const socketPort = 8080;
 
 wss.on('connection', function connection(ws) {
 
@@ -69,6 +73,10 @@ wss.on('connection', function connection(ws) {
         process.exit()
     });
 
+});
+
+server.listen(socketPort, () => {
+    console.log('listening on ' + socketPort);
 });
 
 module.exports = wss;

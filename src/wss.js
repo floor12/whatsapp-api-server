@@ -11,12 +11,22 @@ const socketPort = 8080;
 
 wss.on('connection', function connection(ws) {
 
+
+    let timeOut = setTimeout(() => {
+        console.error('Socket disconnected. Auth not received.')
+        ws.close();
+    }, 3000);
+
+
     if (global.qr) {
         ws.send(JSON.stringify({'type': 'qr', 'qr': global.qr}));
     }
 
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
+    ws.on('message', function (message) {
+        if (JSON.parse(message).authToken === global.accessToken) {
+            console.log('Socket auth success.');
+            clearTimeout(timeOut);
+        }
     });
 
     client.on('qr', (qr) => {

@@ -8,11 +8,13 @@ global.key = fs.readFileSync(process.env.SSL_KEY);
 global.cert = fs.readFileSync(process.env.SSL_CERT);
 
 const express = require('express');
+const https = require('https');
 const cors = require('cors');
 const busboyBodyParser = require('busboy-body-parser');
 
 const port = process.env.PORT || 5000;
 const app = express();
+const server = https.createServer({key: global.key, cert: global.cert}, app);
 const wss = require('./wss');
 
 app.use(cors());
@@ -45,6 +47,6 @@ app.use('/', require('./endpoint/index'));
 app.use('/', require('./endpoint/getFile'));
 app.use('/', require('./endpoint/qr'));
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log('listening on ' + port);
 });
